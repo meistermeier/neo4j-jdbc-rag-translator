@@ -10,10 +10,6 @@ As a consequence, this means that every Cypher call needs to be marked with `/*+
 
 See the test `RegToCypherTranslatorAIExample` in the src/test folder for a working example.
 
-## Configuration
-
-The 
-
 ## Examples
 
 Node creation example:
