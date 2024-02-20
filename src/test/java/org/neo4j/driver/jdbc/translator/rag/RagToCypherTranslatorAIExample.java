@@ -23,6 +23,7 @@ import org.neo4j.driver.jdbc.Neo4jDriver;
 import java.nio.file.Path;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Map;
 
 public final class RagToCypherTranslatorAIExample {
 
@@ -34,35 +35,29 @@ public final class RagToCypherTranslatorAIExample {
 		var openAIToken = System.getenv("OPEN_AI_TOKEN");
 		if (openAIToken == null || openAIToken.isBlank()) {
 			throw new IllegalArgumentException(
-					"Please set a system environment variable named `OPEN_AI_TOKEN` containing your OpenAI token");
+				"Please set a system environment variable named `OPEN_AI_TOKEN` containing your OpenAI token");
 		}
 
-		try (var con = Neo4jDriver.withSQLTranslation().fromEnv().orElseThrow()) {
-			//  No cheating involved
-			try (Statement statement = con.createStatement()) {
-				statement.execute("/*+ NEO4J FORCE_CYPHER */MATCH (m:Message) detach delete m");
+		try (var con = Neo4jDriver.withSQLTranslation()
+			.withProperties(Map.of("indexName", "spring-ai-document-index"))
+			.fromEnv().orElseThrow()) {
+			try (var statement = con.createStatement()) {
+				//  No cheating involved
+				statement.execute("MATCH (m:Message) detach delete m");
+				statement.execute("🤖, create a Message node with a property 'content' containing 'the dynamic duo rocks'");
+
+				try (var result = statement.executeQuery("🤖, how many nodes labeled 'Message' are in the graph.")) {
+					while (result.next()) {
+						System.out.println(result.getInt(1));
+					}
+				}
+
+				try (var resultSet = statement.executeQuery("MATCH (n:Message) RETURN n.content AS content LIMIT 1")) {
+					resultSet.next();
+					var content = resultSet.getString("content");
+					System.out.println(content);
+				}
 			}
-
-			Statement stmnt = con.createStatement();
-			stmnt.execute("Create a Message node with a property 'content' containing 'the dynamic duo rocks'");
-			stmnt.close();
-
-			stmnt = con.createStatement();
-			ResultSet result = stmnt.executeQuery("How many nodes labeled 'Message' are in the graph.");
-			while (result.next()) {
-				System.out.println(result.getInt(1));
-			}
-
-			stmnt.close();
-
-			try (Statement statement = con.createStatement()) {
-				ResultSet resultSet = statement.executeQuery("/*+ NEO4J FORCE_CYPHER */MATCH (n:Message) return n.content as content limit 1");
-				resultSet.next();
-				String content = resultSet.getString("content");
-				System.out.println(content);
-			}
-
 		}
 	}
-
 }

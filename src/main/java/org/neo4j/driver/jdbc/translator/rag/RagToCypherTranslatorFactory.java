@@ -29,9 +29,9 @@ import java.util.Map;
 public class RagToCypherTranslatorFactory implements SqlTranslatorFactory {
 
 	@Override
-	public SqlTranslator create(Map<String, String> properties) {
+	public SqlTranslator create(Map<String, Object> properties) {
 		// should be in the properties that create the driver, but I haven't figured out how to apply this if using `.fromEnv()`.
-		return new RagToCypher(Map.of("indexName", "spring-ai-document-index"));
+		return new RagToCypher(properties);
 	}
 
 	@Override
