@@ -31,6 +31,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,11 +57,13 @@ public class RagToCypher implements SqlTranslator {
     {documents}""";
 
 	private static final String SEARCH_QUERY = """
-   /*+ NEO4J FORCE_CYPHER */
    CALL db.index.vector.queryNodes($0, 10, $1)
    				YIELD node AS node, score
    				RETURN node.content AS content
       ORDER BY score DESC""";
+
+	static final String PREFIX = "🤖, ";
+	static final int PREFIX_LENGTH = PREFIX.length();
 
 	private final Map<String, Object> config;
 	private final OpenAiService openAiService;
@@ -72,6 +75,12 @@ public class RagToCypher implements SqlTranslator {
 
 	@Override
 	public String translate(String searchString, DatabaseMetaData databaseMetaData) {
+
+		if(!searchString.startsWith(PREFIX)) {
+			return searchString;
+		}
+
+		searchString = searchString.substring(PREFIX_LENGTH, PREFIX_LENGTH + 1).toUpperCase(Locale.ROOT) + searchString.substring(PREFIX_LENGTH + 1);
 
 		if (databaseMetaData == null) {
 			throw new IllegalStateException("Database connection must be open");
