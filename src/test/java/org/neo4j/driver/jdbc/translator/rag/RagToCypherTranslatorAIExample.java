@@ -19,6 +19,8 @@
 package org.neo4j.driver.jdbc.translator.rag;
 
 import org.neo4j.driver.jdbc.Neo4jDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.sql.ResultSet;
@@ -26,6 +28,8 @@ import java.sql.Statement;
 import java.util.Map;
 
 public final class RagToCypherTranslatorAIExample {
+
+	private static final Logger LOG = LoggerFactory.getLogger("RagToCypherExample");
 
 	private RagToCypherTranslatorAIExample() {
 	}
@@ -48,14 +52,14 @@ public final class RagToCypherTranslatorAIExample {
 
 				try (var result = statement.executeQuery("🤖, how many nodes labeled 'Message' are in the graph.")) {
 					while (result.next()) {
-						System.out.println(result.getInt(1));
+						LOG.info("Result of count Message query: {}", result.getInt(1));
 					}
 				}
 
 				try (var resultSet = statement.executeQuery("MATCH (n:Message) RETURN n.content AS content LIMIT 1")) {
 					resultSet.next();
 					var content = resultSet.getString("content");
-					System.out.println(content);
+					LOG.info("Content of node: {}", content);
 				}
 			}
 		}

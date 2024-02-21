@@ -24,6 +24,8 @@ import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.embedding.EmbeddingRequest;
 import com.theokanning.openai.service.OpenAiService;
 import org.neo4j.driver.jdbc.translator.spi.SqlTranslator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -33,8 +35,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Gerrit Meier
@@ -45,7 +45,7 @@ public class RagToCypher implements SqlTranslator {
 	private static final double DEFAULT_TEMPERATURE = 0.0;
 	private static final String DEFAULT_EMBEDDING_MODEL = "text-embedding-ada-002";
 
-	private static final Logger LOGGER = Logger.getLogger(RagToCypher.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(RagToCypher.class.getName());
 
 	private static final String SYSTEM_PROMPT_TEMPLATE = """
     You are an assistant that gives out Cypher code snippets.
@@ -69,6 +69,9 @@ public class RagToCypher implements SqlTranslator {
 	private final OpenAiService openAiService;
 
 	public RagToCypher(Map<String, Object> config) {
+		if (config.get("indexName") == null) {
+			throw new IllegalArgumentException("The 'indexName' must be set in the driver configuration");
+		}
 		this.openAiService = new OpenAiService(System.getenv("OPEN_AI_TOKEN"));
 		this.config = config;
 	}
@@ -79,6 +82,8 @@ public class RagToCypher implements SqlTranslator {
 		if(!searchString.startsWith(PREFIX)) {
 			return searchString;
 		}
+
+		LOGGER.debug("Got search string '{}'", searchString.replace(PREFIX, ""));
 
 		searchString = searchString.substring(PREFIX_LENGTH, PREFIX_LENGTH + 1).toUpperCase(Locale.ROOT) + searchString.substring(PREFIX_LENGTH + 1);
 
@@ -103,8 +108,8 @@ public class RagToCypher implements SqlTranslator {
 
 			// OpenAi chat request with content
 			String systemPrompt = SYSTEM_PROMPT_TEMPLATE.replace("{documents}", sb.toString());
-			String result = result(searchString, systemPrompt);
-			LOGGER.log(Level.INFO, result);
+			String result = requestChat(searchString, systemPrompt);
+			LOGGER.debug("Resulting cypher: {}", result);
 			return result;
 
 		} catch (SQLException e) {
@@ -117,7 +122,7 @@ public class RagToCypher implements SqlTranslator {
 		return this.openAiService.createEmbeddings(request).getData().stream().flatMap(embedding -> embedding.getEmbedding().stream()).toList();
 	}
 
-	private String result(String searchTerm, String promptTemplate) {
+	private String requestChat(String searchTerm, String promptTemplate) {
 		ChatMessage systemMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(), promptTemplate);
 		ChatMessage userMessage = new ChatMessage(ChatMessageRole.USER.value(), searchTerm);
 		ChatCompletionRequest request = ChatCompletionRequest.builder()

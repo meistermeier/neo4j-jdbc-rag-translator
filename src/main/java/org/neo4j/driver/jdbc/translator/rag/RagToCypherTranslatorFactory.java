@@ -30,7 +30,6 @@ public class RagToCypherTranslatorFactory implements SqlTranslatorFactory {
 
 	@Override
 	public SqlTranslator create(Map<String, Object> properties) {
-		// should be in the properties that create the driver, but I haven't figured out how to apply this if using `.fromEnv()`.
 		return new RagToCypher(properties);
 	}
 
