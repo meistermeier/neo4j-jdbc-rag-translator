@@ -32,6 +32,8 @@ The response gets returned as (non verified) Cypher.
 
 ## Configuration
 
+You need to provide your OpenAI API access token as `OPEN_AI_TOKEN` environment variable.
+
 There are some parameters that need to be provided and some that can be overwritten by the user:
 
 | parameter                 | type   | default                |
@@ -41,11 +43,12 @@ There are some parameters that need to be provided and some that can be overwrit
 | chatModel                 | String | gpt-3.5-turbo          |
 | chatTemperature           | Double | 0.0                    |
 
-## Usage
+## Usage (not needed for running the tests)
 The `RagToCypherTranslatorFactory` needs to be registered as a `org.neo4j.driver.jdbc.translator.spi.SqlTranslatorFactory` in the META-INF/service.
 
 After this is done, every JDBC `Statement` call, e.g. `Statement#executeQuery`, will invoke the translator before executing the statement.
-As a consequence, this means that every Cypher call needs to be marked with `/*+ NEO4J FORCE_CYPHER */`.
+As a consequence, this means that all calls that should invoke the translator need to be prefixed with `🤖, `.
+Otherwise, every query will get interpreted as a potential textual input and not Cypher.
 
 See the test `RegToCypherTranslatorAIExample` in the src/test folder for a working example.
 
