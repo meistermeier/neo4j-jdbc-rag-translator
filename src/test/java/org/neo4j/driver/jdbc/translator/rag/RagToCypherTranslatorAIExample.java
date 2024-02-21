@@ -18,23 +18,19 @@
  */
 package org.neo4j.driver.jdbc.translator.rag;
 
+import org.junit.jupiter.api.Test;
 import org.neo4j.driver.jdbc.Neo4jDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.file.Path;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Map;
 
-public final class RagToCypherTranslatorAIExample {
+class RagToCypherTranslatorAIExampleTest {
 
 	private static final Logger LOG = LoggerFactory.getLogger("RagToCypherExample");
 
-	private RagToCypherTranslatorAIExample() {
-	}
-
-	public static void main(String... args) throws Exception {
+	@Test
+	void letsTalkTextToCypher() throws Exception {
 
 		var openAIToken = System.getenv("OPEN_AI_TOKEN");
 		if (openAIToken == null || openAIToken.isBlank()) {
@@ -56,7 +52,9 @@ public final class RagToCypherTranslatorAIExample {
 					}
 				}
 
-				try (var resultSet = statement.executeQuery("MATCH (n:Message) RETURN n.content AS content LIMIT 1")) {
+				String cypherStatement = "MATCH (n:Message) RETURN n.content AS content LIMIT 1";
+				LOG.info("Executing raw cypher: {}", cypherStatement);
+				try (var resultSet = statement.executeQuery(cypherStatement)) {
 					resultSet.next();
 					var content = resultSet.getString("content");
 					LOG.info("Content of node: {}", content);

@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <junit-jupiter.version>5.10.2</junit-jupiter.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <neo4j-jdbc.version>1.0-SNAPSHOT</neo4j-jdbc.version>
@@ -52,6 +53,12 @@
             <groupId>org.neo4j.driver</groupId>
             <artifactId>neo4j-jdbc-bundle</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
