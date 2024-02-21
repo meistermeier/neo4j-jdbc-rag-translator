@@ -79,13 +79,20 @@ public class RagToCypher implements SqlTranslator {
 	@Override
 	public String translate(String searchString, DatabaseMetaData databaseMetaData) {
 
+		if (searchString == null || searchString.isBlank() || PREFIX.equals(searchString)) {
+			throw new IllegalArgumentException("Cant translate a null or blank search string");
+		}
+
 		if(!searchString.startsWith(PREFIX)) {
 			return searchString;
 		}
 
-		LOGGER.debug("Got search string '{}'", searchString.replace(PREFIX, ""));
+		searchString = (searchString.substring(PREFIX_LENGTH, PREFIX_LENGTH + 1).toUpperCase(Locale.ROOT) + searchString.substring(PREFIX_LENGTH + 1)).trim();
+		if (searchString.charAt(searchString.length() - 1) == ';') {
+			searchString = searchString.substring(0, searchString.length() - 1);
+		}
 
-		searchString = searchString.substring(PREFIX_LENGTH, PREFIX_LENGTH + 1).toUpperCase(Locale.ROOT) + searchString.substring(PREFIX_LENGTH + 1);
+		LOGGER.debug("Using search string '{}'", searchString);
 
 		if (databaseMetaData == null) {
 			throw new IllegalStateException("Database connection must be open");
