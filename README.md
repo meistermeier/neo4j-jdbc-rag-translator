@@ -32,23 +32,32 @@ The response gets returned as (non verified) Cypher.
 
 ## Configuration
 
-You need to provide your OpenAI API access token as `OPEN_AI_TOKEN` environment variable.
+You need to provide your OpenAI API access token as `OPEN_AI_TOKEN` environment variable or directly as a driver property.
 
-There are some parameters that need to be provided and some that can be overwritten by the user:
+There are some parameters that need to be provided and some that can be overwritten by the user as a driver property.
 
-| parameter                 | type   | default                |
-|---------------------------|--------|------------------------|
-| indexName (**mandatory**) | String | _null_                 |
-| embeddingModel            | String | text-embedding-ada-002 |
-| chatModel                 | String | gpt-3.5-turbo          |
-| chatTemperature           | Double | 0.0                    |
+| parameter                 | type   | default                              |
+|---------------------------|--------|--------------------------------------|
+| indexName (**mandatory**) | String | _null_                               |
+| embeddingModel            | String | text-embedding-ada-002               |
+| chatModel                 | String | gpt-3.5-turbo                        |
+| chatTemperature           | Double | 0.0                                  |
+| openAIToken               | String | _environment variable OPEN_AI_TOKEN_ |
 
 ## Usage (not needed for running the tests)
-The `RagToCypherTranslatorFactory` needs to be registered as a `org.neo4j.driver.jdbc.translator.spi.SqlTranslatorFactory` in the META-INF/service.
+The `RagToCypherTranslatorFactory` will register itself via the META-INF/service mechanism with the Neo4j JDBC Driver.
+The required Open AI Token can be passed as a system environment variable or via properties passed to the JDBC driver itself. 
+
+The Neo4j JDCB Driver can be configured in such a way that every statement to be executed goes automatically through the translation layer.
+This is done by setting `enableSQLTranslation` to `true`, either as URL parameter or as driver property.
 
 After this is done, every JDBC `Statement` call, e.g. `Statement#executeQuery`, will invoke the translator before executing the statement.
-As a consequence, this means that all calls that should invoke the translator need to be prefixed with `🤖, `.
-Otherwise, every query will get interpreted as a potential textual input and not Cypher.
+The translator will only kick in if they are prefixed with `🤖, `.
+If a statement is prefixed accordingly, it will be interpreted as textual input for the machine, otherwise it will be treated as normal Cypher and executed as is.
+The Open AI response is hopefully a working Cypher statement, as it will be executed.
+
+Another option is to just put the translator on the classpath, configure the Open AI Token, but set `enableSQLTranslation` to `false` (which is the default).
+JDBC provides `Connection#nativeSQL`, which you can call as needed then, i.e. like this `con.nativeSQL("🤖, how many IWasHere nodes are in the graph");` which should give you than a Cypher statement, that you can either use or amend as needed.
 
 See the test `RegToCypherTranslatorAIExample` in the src/test folder for a working example.
 
