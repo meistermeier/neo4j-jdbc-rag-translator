@@ -39,7 +39,7 @@ class RagToCypherTranslatorAIExampleTest {
 		}
 
 		try (var con = Neo4jDriver.withSQLTranslation()
-			.withProperties(Map.of("indexName", "spring-ai-document-index"))
+			.withProperties(Map.of("indexName", "spring-ai-document-index", "openAIToken", openAIToken))
 			.fromEnv().orElseThrow()) {
 			try (var statement = con.createStatement()) {
 				//  No cheating involved

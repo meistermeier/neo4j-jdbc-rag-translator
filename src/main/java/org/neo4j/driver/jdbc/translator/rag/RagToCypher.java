@@ -72,7 +72,7 @@ public class RagToCypher implements SqlTranslator {
 		if (config.get("indexName") == null) {
 			throw new IllegalArgumentException("The 'indexName' must be set in the driver configuration");
 		}
-		this.openAiService = new OpenAiService(System.getenv("OPEN_AI_TOKEN"));
+		this.openAiService = new OpenAiService((String) config.getOrDefault("openAIToken", System.getenv("OPEN_AI_TOKEN")));
 		this.config = config;
 	}
 
