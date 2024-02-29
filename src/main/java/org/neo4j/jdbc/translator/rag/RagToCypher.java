@@ -16,14 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.neo4j.driver.jdbc.translator.rag;
+package org.neo4j.jdbc.translator.rag;
 
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.embedding.EmbeddingRequest;
 import com.theokanning.openai.service.OpenAiService;
-import org.neo4j.driver.jdbc.translator.spi.SqlTranslator;
+import org.neo4j.jdbc.translator.spi.SqlTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +57,7 @@ public class RagToCypher implements SqlTranslator {
     {documents}""";
 
 	private static final String SEARCH_QUERY = """
-   CALL db.index.vector.queryNodes($0, 10, $1)
+   CALL db.index.vector.queryNodes($1, 10, $2)
    				YIELD node AS node, score
    				RETURN node.content AS content
       ORDER BY score DESC""";
