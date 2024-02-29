@@ -23,7 +23,7 @@ import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.embedding.EmbeddingRequest;
 import com.theokanning.openai.service.OpenAiService;
-import org.neo4j.driver.jdbc.translator.spi.SqlTranslator;
+import org.neo4j.jdbc.translator.spi.SqlTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

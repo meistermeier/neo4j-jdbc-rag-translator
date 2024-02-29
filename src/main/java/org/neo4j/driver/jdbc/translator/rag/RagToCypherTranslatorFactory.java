@@ -18,8 +18,8 @@
  */
 package org.neo4j.driver.jdbc.translator.rag;
 
-import org.neo4j.driver.jdbc.translator.spi.SqlTranslator;
-import org.neo4j.driver.jdbc.translator.spi.SqlTranslatorFactory;
+import org.neo4j.jdbc.translator.spi.SqlTranslator;
+import org.neo4j.jdbc.translator.spi.SqlTranslatorFactory;
 
 import java.util.Map;
 
