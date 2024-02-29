@@ -57,7 +57,7 @@ public class RagToCypher implements SqlTranslator {
     {documents}""";
 
 	private static final String SEARCH_QUERY = """
-   CALL db.index.vector.queryNodes($0, 10, $1)
+   CALL db.index.vector.queryNodes($1, 10, $2)
    				YIELD node AS node, score
    				RETURN node.content AS content
       ORDER BY score DESC""";
