@@ -12,7 +12,7 @@
         <junit-jupiter.version>5.10.2</junit-jupiter.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <neo4j-jdbc.version>6.0.0-M01</neo4j-jdbc.version>
+        <neo4j-jdbc.version>6.0.0-M02</neo4j-jdbc.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>2.0.12</slf4j.version>
     </properties>
@@ -25,6 +25,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.neo4j</groupId>
+                <artifactId>neo4j-jdbc-bom</artifactId>
+                <version>${neo4j-jdbc.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -33,7 +40,6 @@
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-jdbc-translator-spi</artifactId>
-            <version>${neo4j-jdbc.version}</version>
         </dependency>
         <dependency>
             <groupId>com.theokanning.openai-gpt3-java</groupId>
@@ -57,7 +63,6 @@
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-jdbc-bundle</artifactId>
-            <version>${neo4j-jdbc.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -23,7 +23,7 @@ import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.embedding.EmbeddingRequest;
 import com.theokanning.openai.service.OpenAiService;
-import org.neo4j.jdbc.translator.spi.SqlTranslator;
+import org.neo4j.jdbc.translator.spi.Translator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ import java.util.Map;
 /**
  * @author Gerrit Meier
  */
-public class RagToCypher implements SqlTranslator {
+public class RagToCypher implements Translator {
 
 	private static final String DEFAULT_CHAT_MODEL = "gpt-3.5-turbo";
 	private static final double DEFAULT_TEMPERATURE = 0.0;
