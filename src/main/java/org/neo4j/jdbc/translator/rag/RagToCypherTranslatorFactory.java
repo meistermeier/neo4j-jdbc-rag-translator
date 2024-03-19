@@ -18,23 +18,18 @@
  */
 package org.neo4j.jdbc.translator.rag;
 
-import org.neo4j.jdbc.translator.spi.SqlTranslator;
-import org.neo4j.jdbc.translator.spi.SqlTranslatorFactory;
-
 import java.util.Map;
+
+import org.neo4j.jdbc.translator.spi.Translator;
+import org.neo4j.jdbc.translator.spi.TranslatorFactory;
 
 /**
  * @author Gerrit Meier
  */
-public class RagToCypherTranslatorFactory implements SqlTranslatorFactory {
+public class RagToCypherTranslatorFactory implements TranslatorFactory {
 
 	@Override
-	public SqlTranslator create(Map<String, Object> properties) {
+	public Translator create(Map<String, Object> properties) {
 		return new RagToCypher(properties);
-	}
-
-	@Override
-	public String getName() {
-		return "RAG to Cypher Translator";
 	}
 }
