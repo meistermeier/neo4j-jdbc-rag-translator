@@ -1,5 +1,8 @@
 # Rag To Cypher Translator
 
+> [!IMPORTANT]
+> Archived because text2cypher is now part of the neo4j-jdbc driver (https://github.com/neo4j/neo4j-jdbc/pull/647)
+
 A [Neo4j-JDBC driver](https://github.com/neo4j/neo4j-jdbc) SqlTranslator implementation that uses OpenAI to create Cypher statements from natural language description.
 
 ## Preparation
